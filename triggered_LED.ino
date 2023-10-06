@@ -1,7 +1,7 @@
-
-// Example sketch which shows how to display some patterns
-// on a 64x32 LED matrix
-//
+// This is an example file
+// It shows some LED patterns for a certain time, and if a trigger signal is received on the 
+// A1 input pin it switches to the next pattern.
+// simply wire the trigger signal on the right port on the microcontroller
 
 #include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>
 
