@@ -4,8 +4,13 @@ For background why I bought this setup, see [this reddit discussion](https://www
 * Parts: [Adafruit Matrix Portal S3](https://learn.adafruit.com/adafruit-matrixportal-s3) with a HUB75 panel
 * Any HUB75 panel (and probably also others) most likely work
 
+## Dependency
+Install [this](https://learn.adafruit.com/adafruit-matrixportal-s3/overview) to get it work with your Arduino IDE.
+
 ## Library
+Install this library in your Arduino IDE.
 * https://github.com/mrfaptastic/ESP32-HUB75-MatrixPanel-DMA
+
 
 The examples from this library don't work out of the box since the pins are differently wired on the Adafruit Matrix Portal S3.
 You need to change the content of the file `~/Arduino/libraries/ESP32_HUB75_LED_MATRIX_PANEL_DMA_Display/src/platforms/esp32s3/esp32s3-default-pins.hpp` to
