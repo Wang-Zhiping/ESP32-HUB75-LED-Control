@@ -36,4 +36,7 @@ You need to change the content of the file `~/Arduino/libraries/ESP32_HUB75_LED_
  #define CLK_PIN_DEFAULT 2    
 ```
 
-                             
+
+## Issues
+Sometimes if strange errors occurs, either try to change USB cable or another fix could be:
+* Hold BOOT button, press Reset button, release boot button. Then upload
