@@ -3,7 +3,7 @@ import time
 
 # --- Configuration ---
 # Set the correct serial port for your ESP32 (e.g., 'COM3' on Windows, '/dev/ttyACM0' on Linux)
-SERIAL_PORT = '/dev/ttyACM3'
+SERIAL_PORT = '/dev/ttyACM4'
 BAUD_RATE = 115200
 
 # Global serial connection object

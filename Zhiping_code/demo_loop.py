@@ -1,40 +1,44 @@
 import time
-import basic # control code
+import basic  # Your custom hardware control module
 
 # ---
-## Spiral Animation: From Center Point Outward
+# Spiral Animation: Expanding from Center Outward in a Fixed Square Region
 # ---
-def draw_spiral_center_out(center_x=16, center_y=16, size=15, color=(255, 0, 0), delay=0.05):
+def draw_spiral_center_out(center_x=16, center_y=16, size=7, color=(255, 0, 0), delay=0.05):
     """
-    Draws a spiral animation that expands from a central point outwards.
+    Draws a spiral animation that expands from a central point outward within a fixed square region.
 
     Args:
-        center_x (int): The X-coordinate of the spiral's center.
-        center_y (int): The Y-coordinate of the spiral's center.
-        size (int): The side length of the square grid the spiral fills (e.g., 7 for a 7x7 area).
-        color (tuple): The RGB color of the spiral (e.g., (255, 0, 0) for red).
-        delay (float): The delay between lighting/unlighting each pixel.
+        center_x (int): X-coordinate of the spiral center.
+        center_y (int): Y-coordinate of the spiral center.
+        size (int): Side length of the square spiral area (e.g. 15 for a 15x15 grid).
+        color (tuple): RGB color for the spiral (e.g. (255, 0, 0) for red).
+        delay (float): Time delay (in seconds) between each animation step.
     """
     all_spiral_coords = []
 
-    x, y = 0, 0
-    dx, dy = 0, 1 # Initial direction: (0, 1) means moving "up" (or increasing Y)
+    # Calculate region bounds
+    half = size // 2
+    min_x, max_x = center_x - half, center_x + half
+    min_y, max_y = center_y - half, center_y + half
+
+    # Spiral generation parameters
+    x, y = 0, 0               # Offset from center
+    dx, dy = 0, 1             # Initial direction: upward
     segment_length = 1
     steps_in_segment = 0
     turns = 0
 
-    max_pixels = size * size # Total pixels in a size x size grid
-
-    for _ in range(max_pixels):
+    # Build coordinate list within square area
+    while len(all_spiral_coords) < size * size:
         current_x = center_x + x
         current_y = center_y + y
 
-        # Optional: Add boundary checks if your matrix has strict limits (e.g., 0-31)
-        # if not (0 <= current_x < 32 and 0 <= current_y < 32):
-        #     break
+        # Only include coordinates within bounds
+        if min_x <= current_x <= max_x and min_y <= current_y <= max_y:
+            all_spiral_coords.append((current_x, current_y))
 
-        all_spiral_coords.append((current_x, current_y))
-
+        # Move to next coordinate
         x += dx
         y += dy
         steps_in_segment += 1
@@ -42,49 +46,41 @@ def draw_spiral_center_out(center_x=16, center_y=16, size=15, color=(255, 0, 0),
         if steps_in_segment == segment_length:
             steps_in_segment = 0
             turns += 1
-            
-            # Rotate direction 90 degrees clockwise (e.g., (0,1) -> (-1,0) -> (0,-1) -> (1,0) -> (0,1))
-            dx, dy = -dy, dx
-
+            dx, dy = -dy, dx  # Rotate 90 degrees clockwise
             if turns % 2 == 0:
                 segment_length += 1
-    
-    # Print first 5 coordinates to confirm the path (for debugging)
-    print(f"Generated spiral path (first 5 coordinates): {all_spiral_coords[:5]}")
 
+    # Animate the spiral
     prev_pixel = None
-
     for x_coord, y_coord in all_spiral_coords:
-        basic.set_pixel(x_coord, y_coord, *color) # Use imported function
-
+        basic.set_pixel(x_coord, y_coord, *color)  # Turn on current pixel
         if prev_pixel:
-            basic.set_pixel(prev_pixel[0], prev_pixel[1], 0, 0, 0) # Use imported function
-
+            basic.set_pixel(prev_pixel[0], prev_pixel[1], 0, 0, 0)  # Turn off previous pixel
         prev_pixel = (x_coord, y_coord)
         time.sleep(delay)
 
+    # Turn off final pixel
     if prev_pixel:
         time.sleep(delay)
-        basic.set_pixel(prev_pixel[0], prev_pixel[1], 0, 0, 0) # Use imported function
+        basic.set_pixel(prev_pixel[0], prev_pixel[1], 0, 0, 0)
 
 # ---
-## Main Execution for Spiral Animation
+# Main Execution
 # ---
 if __name__ == "__main__":
-    # Initialize the serial connection once at the start of the main script
-    # This calls _initialize_serial() inside basic.py
-    basic._initialize_serial() 
+    # Initialize serial connection to LED matrix or controller
+    basic._initialize_serial()
 
-    if basic.ser: # Check if serial connection was successfully established
+    if basic.ser:
         basic.clear()
         basic.set_brightness(255)
         time.sleep(0.5)
 
         while True:
-            draw_spiral_center_out(center_x=16, center_y=16, size=7, color=(255, 0, 0), delay=0.05)
+            draw_spiral_center_out(center_x=16, center_y=16, size=30, color=(255, 0, 0), delay=0.1)
             time.sleep(0.5)
     else:
         print("Skipping spiral animation as serial connection could not be established.")
 
-    # Important: Close the serial connection when the script finishes or is interrupted
+    # Close the serial connection when done
     basic.close_connection()
